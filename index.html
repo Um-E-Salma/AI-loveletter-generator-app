@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Letter Generator</title>
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .custom-button {
+            padding: 15px 30px;
+            background-color: #e57373;
+            color: black;
+            border: 2px solid #e57373;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .custom-button:hover {
+            background-color: #ef5350;
+            border-color: #ef5350;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 60%;
+            border-radius: 10px;
+        }
+
+        .modal-footer {
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="love-letter-generator">
+        <form id="loveLetterForm">
+            <div class="form-group">
+                <label for="recipient">Name des Empfängers:</label>
+                <input type="text" id="recipient" required>
+            </div>
+            <div class="form-group">
+                <label for="tone">Tonfall:</label>
+                <select id="tone">
+                    <option value="romantisch">Romantisch</option>
+                    <option value="lustig">Lustig</option>
+                    <option value="ernst">Ernst</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="characteristics">Charaktereigenschaften:</label>
+                <input type="text" id="characteristics" placeholder="z.B. liebenswert, intelligent, charmant">
+            </div>
+            <div class="form-group">
+                <label for="moments">Besondere Momente oder Erlebnisse:</label>
+                <input type="text" id="moments" placeholder="z.B. unser erstes Date, die Reise nach Paris">
+            </div>
+            <div class="form-group">
+                <label for="sender">Name des Absenders:</label>
+                <input type="text" id="sender" placeholder="Dein Name" required>
+            </div>
+            <div class="form-group button-group">
+                <button type="submit" id="submitButton" class="custom-button">Liebesbrief generieren</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="loveLetterModal" class="modal">
+        <div class="modal-content">
+            <h4>Generated Love Letter</h4>
+            <textarea id="modal-generated-letter"></textarea>
+            <button id="saveChangesButton" class="custom-button">Änderungen speichern</button>
+            <button id="downloadButton" class="custom-button">PDF Hochladen</button>
+        </div>
+        <div class="modal-footer">
+            <button id="closeModal" class="modal-close custom-button">Schließen</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.tiny.cloud/1/Your-Api-Key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // Initialize TinyMCE inside the modal
+        tinymce.init({
+            selector: '#modal-generated-letter',
+            height: 300,
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+        });
+
+        // Function to show the modal
+        function showModal() {
+            document.getElementById('loveLetterModal').style.display = 'block';
+        }
+
+        // Function to close the modal
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('loveLetterModal').style.display = 'none';
+        }
+
+        // Saving changes after editing the letter in TinyMCE
+        document.getElementById('saveChangesButton').onclick = async function () {
+            const updatedLetter = tinymce.get('modal-generated-letter').getContent();
+
+            try {
+                const response = await fetch('Your-herokuapp-url/save-changes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ updatedLetter })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                alert('Änderungen wurden erfolgreich gespeichert.');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Fehler beim Speichern der Änderungen.');
+            }
+        };
+
+        // PDF Generation and upload
+        document.getElementById('downloadButton').onclick = async function () {
+            const letterContent = tinymce.get('modal-generated-letter').getContent();
+            
+            // Generate PDF using jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.fromHTML(letterContent, 15, 15, {
+                'width': 170,
+            });
+
+            // Convert the PDF to a Blob (binary object)
+            const pdfBlob = doc.output('blob');
+
+            // Send the Blob to your server via a POST request
+            const formData = new FormData();
+            formData.append('pdf', pdfBlob, 'love-letter.pdf');
+
+            try {
+                const response = await fetch('http://localhost:3000/upload-pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                alert('PDF erfolgreich auf dem Server gespeichert.');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Fehler beim Speichern des PDFs auf dem Server.');
+            }
+        };
+
+        // Submit the form and generate the love letter
+        document.getElementById('loveLetterForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const recipient = document.getElementById('recipient').value;
+            const tone = document.getElementById('tone').value;
+            const characteristics = document.getElementById('characteristics').value;
+            const moments = document.getElementById('moments').value;
+            const sender = document.getElementById('sender').value;
+            const submitButton = document.getElementById('submitButton');
+            
+            submitButton.textContent = 'Liebesbrief generieren...';
+
+            try {
+                const response = await fetch('https://Your-herokuapp-url/generate-letter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ recipient, tone, characteristics, moments, sender })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                tinymce.get('modal-generated-letter').setContent(data.letter); // Load the generated letter into TinyMCE modal
+                showModal(); // Show the modal with the letter
+            } catch (error) {
+                console.error('Error:', error);
+                tinymce.get('modal-generated-letter').setContent('Es gab ein Problem beim Generieren des Liebesbriefs.');
+                showModal(); // Show the modal with error message
+            } finally {
+                submitButton.textContent = 'Liebesbrief generieren';
+            }
+        });
+    </script>
+</body>
+</html>
