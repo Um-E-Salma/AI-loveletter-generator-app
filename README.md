@@ -1,5 +1,5 @@
-# AI-loveletter-generator-app
-This project is a web application that integrates OpenAI's GPT-4 API with Shopify form to generate personalized love letters. The app is integrated within Shopify using a custom form and includes an editor powered by TinyMCE, allowing users to modify the generated love letters. Once edited, the changes are dynamically saved and displayed on the overlay
+# AI-loveletter-generator-app-integrated with Shopy's Custom Form
+This project is a web application that integrates OpenAI's GPT-4 API to Shopify to generate personalized love letters. The app is integrated within Shopify using a custom form and includes an editor powered by TinyMCE, allowing users to modify the generated love letters. Once edited, the changes are dynamically saved.
 
 ## Features
 - **Generate Love Letters**: Using OpenAI's GPT-4 model, users can create custom love letters based on prompts like recipient name, characteristics, tone, and special moments.
@@ -125,5 +125,5 @@ Below the screenshot and a video showing the flow of the application:
 
 ## Contact
 
-If you have any questions or suggestions, feel free to contact me at [umesalma622@gmail.com](mailto:umesalma622@gmail.com).
+If you have any questions or suggestions, or if you are interested in AI-related work or projects, feel free to contact me at: [umesalma622@gmail.com](mailto:umesalma622@gmail.com)
 ```
