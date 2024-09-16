@@ -109,7 +109,7 @@ git clone https://github.com/yourusername/loveletter-generator-app.git
 Below are some screenshots showing the flow of the application:
 
 - **Shopify Form**:  
-   (Add screenshot here)
+   ![Shopify Form image](https://github.com/Um-E-Salma/AI-loveletter-generator-app/blob/main/Response%20in%20german-TinyMCE%20popup.jpg)
 
 - **Generated Love Letter in TinyMCE**:  
    (Add screenshot here)
