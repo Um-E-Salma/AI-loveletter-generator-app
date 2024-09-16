@@ -114,7 +114,7 @@ Below the screenshot and a video showing the flow of the application:
 
 
 - **Shopify Form Video**:  
-   ![](https://github.com/Um-E-Salma/AI-loveletter-generator-app/blob/main/generating%20response%20in%20English.mp4)
+   ![Shopify form video](https://github.com/Um-E-Salma/AI-loveletter-generator-app/blob/main/generating%20response%20in%20English.mp4)
 
 ## APIs and Libraries Used
 
